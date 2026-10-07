@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tuanku Imam Bonjol vs Belanda | Sejarah Interaktif Perang Padri</title>
+<meta name="description" content="Web sejarah interaktif per slide: Perang Padri, Tuanku Imam Bonjol, dan perlawanan Minangkabau terhadap Belanda, lengkap dengan simulasi pixel pengepungan Benteng Bonjol.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #4A1218;
+    --red: #B3202A;
+    --gold: #E2A82B;
+    --kain: #EEF0EA;
+    --surface: #F8F9F5;
+    --ink: #1D1416;
+    --night: #240E16;
+    --line: rgba(74, 18, 24, .3);
+    --slab: 'Alfa Slab One', 'Rockwell', 'Roboto Slab', Georgia, serif;
+    --text: 'Literata', Georgia, 'Times New Roman', serif;
+    --pix: 'Pixelify Sans', ui-monospace, 'Courier New', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: var(--text); font-size: 1.0625rem; line-height: 1.7; background: var(--maroon); color: var(--ink); overflow: hidden; }
+  h1, h2, h3 { font-family: var(--slab); font-weight: 400; line-height: 1.12; margin: 0; }
+  p { margin: 0 0 1em; }
+  button, input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .slide.light :focus-visible, .panel :focus-visible { outline-color: var(--red); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ===== Kerangka aplikasi ===== */
+  .app { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; height: 100vh; height: 100dvh; }
+  .top { background: var(--maroon); color: var(--kain); }
+  .marawa { display: flex; height: 8px; }
+  .marawa span { flex: 1; }
+  .marawa span:nth-child(1) { background: var(--gold); }
+  .marawa span:nth-child(2) { background: var(--red); }
+  .marawa span:nth-child(3) { background: var(--ink); }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px clamp(14px, 3vw, 32px); }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--slab); font-size: 1.05rem; color: var(--gold); text-decoration: none; }
+  .logo { width: 22px; height: 20px; background: var(--gold); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .top-right { display: flex; align-items: center; gap: 14px; }
+  .count { font-family: var(--pix); font-size: 1.05rem; letter-spacing: .05em; }
+  .strip { height: 12px; background-color: var(--maroon); background-repeat: repeat-x; background-position: left bottom; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M0 12 12 0 24 12Z' fill='%23E2A82B'/%3E%3C/svg%3E"); }
+
+  .pbtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--pix); font-weight: 600; font-size: 1rem; line-height: 1.1; background: var(--gold); color: var(--ink); border: 3px solid var(--ink); padding: 9px 18px; box-shadow: 4px 4px 0 var(--ink); cursor: pointer; transition: transform .08s, box-shadow .08s; }
+  .pbtn:hover { background: #f0bb48; }
+  .pbtn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+  .pbtn:disabled { opacity: .45; cursor: not-allowed; }
+  .pbtn.ghost { background: transparent; color: var(--kain); border-color: var(--kain); box-shadow: 4px 4px 0 rgba(238, 240, 234, .3); }
+  .pbtn.ghost:hover { background: rgba(238, 240, 234, .12); }
+  .pbtn.small { padding: 6px 12px; font-size: .92rem; }
+  .top .pbtn { box-shadow: 3px 3px 0 var(--ink); padding: 6px 12px; font-size: .95rem; }
+
+  .stage { position: relative; overflow: hidden; background: var(--kain); }
+  .slide { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; display: none; }
+  .slide.active { display: block; }
+  .slide.dark { background: var(--maroon); color: var(--kain); }
+  .slide.night { background: var(--night); color: var(--kain); }
+  .slide.light { background: var(--kain); color: var(--ink); }
+  .inner { max-width: 1180px; margin: 0 auto; min-height: 100%; padding: clamp(18px, 3vw, 36px) clamp(16px, 4vw, 56px); display: flex; flex-direction: column; justify-content: center; }
+  .s-head h2 { font-size: clamp(1.7rem, 3.8vw, 2.8rem); color: var(--maroon); }
+  .dark .s-head h2, .night .s-head h2 { color: var(--gold); }
+  .s-head p { max-width: 62ch; margin: 10px 0 0; }
+  .dark .s-head p, .night .s-head p { color: rgba(238, 240, 234, .85); }
+  h2:focus, h1:focus { outline: none; }
+
+  .bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px clamp(12px, 3vw, 32px); background: var(--maroon); border-top: 4px solid var(--gold); color: var(--kain); }
+  .tri { display: block; width: 14px; height: 14px; background: currentColor; }
+  .tri.l { clip-path: polygon(100% 0, 100% 100%, 0 50%); }
+  .tri.r { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .bottom .pbtn { box-shadow: 3px 3px 0 var(--ink); min-width: 52px; }
+  .dots { display: flex; align-items: flex-end; justify-content: center; gap: 6px; flex: 1; }
+  .dot { width: 22px; height: 20px; padding: 0; border: 0; cursor: pointer; background: rgba(238, 240, 234, .26); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .dot.seen { background: rgba(238, 240, 234, .6); }
+  .dot.on { background: var(--gold); height: 26px; }
+  @media (max-width: 560px) { .pbtn .txt { display: none; } .dot { width: 18px; } .dots { gap: 4px; } }
+
+  .menu { position: fixed; inset: 0; z-index: 30; background: rgba(29, 20, 22, .88); display: grid; place-items: center; padding: 18px; }
+  .menu[hidden] { display: none; }
+  .menu-box { width: min(560px, 100%); max-height: 100%; overflow: auto; background: var(--kain); color: var(--ink); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--gold); padding: 20px; }
+  .menu-box h2 { font-size: 1.5rem; color: var(--maroon); margin-bottom: 14px; }
+  .menu ol { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .menu li button { width: 100%; display: grid; grid-template-columns: 32px 1fr; text-align: left; font-family: var(--pix); font-size: 1.05rem; padding: 8px 10px; background: var(--surface); border: 3px solid var(--ink); cursor: pointer; }
+  .menu li button[aria-current="true"] { background: var(--maroon); color: var(--gold); }
+  .menu li button:hover { background: var(--gold); color: var(--ink); }
+
+  /* ===== Komponen umum ===== */
+  .panel { background: var(--surface); border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--maroon); padding: 20px; }
+  .screen { position: relative; margin: 0; background: #000; border: 6px solid var(--ink); box-shadow: 0 0 0 3px var(--gold), 10px 10px 0 rgba(0, 0, 0, .35); }
+  .screen canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .09) 0, rgba(0, 0, 0, .09) 1px, transparent 1px, transparent 3px), radial-gradient(ellipse at center, transparent 62%, rgba(0, 0, 0, .35) 100%); }
+  .frame { margin: 0; border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--maroon); background: #000; }
+  .frame canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .pixel-ico { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+
+  /* ===== 1. Beranda ===== */
+  .hero-grid { display: grid; gap: 34px; align-items: center; }
+  @media (min-width: 940px) { .hero-grid { grid-template-columns: 5fr 7fr; gap: 56px; } }
+  .hero-text h1 { font-size: clamp(2.3rem, 5.4vw, 4.4rem); color: var(--kain); }
+  .hero-text .sub { font-style: italic; font-size: clamp(1.1rem, 2vw, 1.4rem); color: var(--gold); margin: 18px 0 14px; }
+  .hero-text .lede { max-width: 54ch; color: rgba(238, 240, 234, .88); margin-bottom: 26px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  /* ===== 2. Tujuan ===== */
+  .goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 22px; margin-top: 26px; }
+  .goal .ico { width: 68px; height: 68px; margin-bottom: 14px; display: grid; place-items: center; background: var(--maroon); border: 3px solid var(--ink); }
+  .goal h3 { font-size: 1.2rem; color: var(--maroon); margin-bottom: 8px; }
+  .goal p { margin: 0; font-size: 1rem; line-height: 1.6; }
+
+  /* ===== 3. Materi ===== */
+  .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 20px; }
+  .tab { font-family: var(--pix); font-size: 1.05rem; padding: 9px 16px; background: var(--surface); border: 3px solid var(--ink); cursor: pointer; }
+  .tab:hover { background: var(--gold); }
+  .tab[aria-selected="true"] { background: var(--maroon); color: var(--gold); box-shadow: 4px 4px 0 var(--gold); }
+  .duo { display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 900px) { .duo { grid-template-columns: 1.05fr .95fr; gap: 44px; } }
+  .duo h3 { font-size: clamp(1.4rem, 3vw, 2rem); color: var(--maroon); margin-bottom: 12px; }
+  .duo p { font-size: 1.1rem; max-width: 56ch; margin: 0; }
+
+  /* ===== 4. Timeline ===== */
+  .rail { display: flex; overflow-x: auto; margin: 22px 0 18px; padding-bottom: 6px; }
+  .node { position: relative; flex: 1 0 118px; padding: 34px 6px 4px; background: none; border: 0; cursor: pointer; font-family: var(--slab); font-size: 1rem; color: var(--maroon); text-align: center; }
+  .node::before { content: ""; position: absolute; top: 14px; left: 0; right: 0; height: 4px; background: var(--maroon); }
+  .node:first-child::before { left: 50%; }
+  .node:last-child::before { right: 50%; }
+  .node::after { content: ""; position: absolute; top: 0; left: 50%; width: 26px; height: 23px; margin-left: -13px; background: var(--maroon); clip-path: polygon(50% 0, 100% 100%, 0 100%); transition: transform .15s; }
+  .node.hot::after { background: var(--red); }
+  .node.after-end::after { background: var(--gold); }
+  .node[aria-selected="true"]::after { transform: scale(1.35); background: var(--red); }
+  .node[aria-selected="true"] { color: var(--red); }
+  .node:hover { color: var(--red); }
+  .tl-year { font-family: var(--slab); font-size: clamp(2rem, 5vw, 3.4rem); color: var(--red); line-height: 1; margin-bottom: 10px; }
+
+  /* ===== 5. Analisis ===== */
+  .ana { display: grid; gap: 18px; margin-top: 22px; }
+  @media (min-width: 900px) { .ana { grid-template-columns: 250px 1fr; gap: 26px; } }
+  .ana-list { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; }
+  @media (min-width: 900px) { .ana-list { flex-direction: column; overflow: visible; padding: 0; } }
+  .aspek { flex: 0 0 auto; text-align: left; font-family: var(--pix); font-size: 1rem; line-height: 1.2; padding: 10px 14px; background: var(--surface); border: 3px solid var(--ink); cursor: pointer; }
+  .aspek:hover { background: var(--gold); }
+  .aspek[aria-selected="true"] { background: var(--maroon); color: var(--gold); box-shadow: 4px 4px 0 var(--gold); }
+  .ana-panel h3 { font-size: clamp(1.3rem, 2.6vw, 1.8rem); color: var(--maroon); margin-bottom: 16px; }
+  .blocks { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .blk { border-left: 6px solid var(--gold); padding-left: 14px; }
+  .blk:nth-child(2) { border-left-color: var(--red); }
+  .blk b { display: block; font-family: var(--slab); font-weight: 400; color: var(--maroon); font-size: 1.05rem; margin-bottom: 4px; }
+  .blk p { margin: 0; }
+  .blk.solo p { font-size: 1.15rem; max-width: 58ch; }
+  .versus { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+  .versus .vs { font-family: var(--slab); color: var(--red); font-size: 1.4rem; }
+
+  /* ===== 6. Simulasi ===== */
+  .sim { display: grid; gap: 22px; margin-top: 18px; align-items: start; }
+  @media (min-width: 1000px) { .sim { grid-template-columns: 1.7fr 1fr; } }
+  .sim .screen-wrap { width: min(100%, calc((100vh - 360px) * 1.7778)); width: min(100%, calc((100dvh - 360px) * 1.7778)); min-width: min(100%, 300px); }
+  .badge { position: absolute; z-index: 2; left: 10px; top: 10px; font-family: var(--pix); font-size: 1.05rem; background: var(--ink); color: var(--gold); padding: 3px 10px; border: 2px solid var(--gold); }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+  .scrub { width: 100%; margin-top: 14px; accent-color: var(--gold); height: 22px; }
+  .dpanel { background: rgba(238, 240, 234, .06); border: 3px solid rgba(238, 240, 234, .26); padding: 16px; }
+  .phases { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+  .phases button { width: 100%; display: grid; grid-template-columns: 34px 1fr; gap: 6px; align-items: center; text-align: left; font-family: var(--pix); font-size: 1rem; line-height: 1.2; padding: 8px 10px; background: transparent; border: 2px solid rgba(238, 240, 234, .3); color: var(--kain); cursor: pointer; }
+  .phases button:hover { background: rgba(238, 240, 234, .1); }
+  .phases button[aria-current="true"] { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .phases .n { font-family: var(--slab); font-size: 1.1rem; }
+  .cap h3 { font-size: 1.25rem; color: var(--gold); margin-bottom: 8px; }
+  .cap p { margin: 0 0 8px; font-size: 1rem; line-height: 1.6; }
+  .cap .note { font-size: .88rem; color: rgba(238, 240, 234, .65); font-style: italic; }
+
+  /* ===== 7. Aktivitas ===== */
+  .act { display: grid; gap: 26px; margin-top: 22px; align-items: start; }
+  @media (min-width: 900px) { .act { grid-template-columns: 1.3fr .7fr; } }
+  .act h3 { font-size: 1.4rem; color: var(--maroon); margin-bottom: 6px; }
+  .checks { list-style: none; margin: 14px 0 0; padding: 0; }
+  .checks li { border-top: 1px solid var(--line); }
+  .checks li:last-child { border-bottom: 1px solid var(--line); }
+  .checks label { display: grid; grid-template-columns: 28px 1fr; gap: 14px; align-items: start; padding: 13px 4px; cursor: pointer; }
+  .checks label:hover { background: rgba(226, 168, 43, .16); }
+  .checks input { width: 22px; height: 22px; margin: 3px 0 0; accent-color: var(--red); }
+  .checks input:checked + span { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+  .prog { display: flex; gap: 6px; margin: 16px 0 6px; }
+  .prog i { display: block; width: 30px; height: 27px; background: rgba(74, 18, 24, .16); clip-path: polygon(50% 0, 100% 100%, 0 100%); transition: background .2s; }
+  .prog i.on { background: var(--red); }
+  .prog-text { font-family: var(--pix); margin: 0; color: var(--maroon); }
+  .group-art { display: grid; place-items: center; background: var(--maroon); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--gold); padding: 24px; }
+
+  /* ===== 8. Latihan ===== */
+  .quiz { margin-top: 22px; max-width: 820px; }
+  .quiz h3 { font-size: clamp(1.15rem, 2.4vw, 1.5rem); line-height: 1.35; color: var(--maroon); margin-bottom: 18px; }
+  .opts { display: grid; gap: 10px; }
+  .opt { position: relative; display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; padding: 12px 14px; background: var(--kain); border: 3px solid var(--ink); cursor: pointer; }
+  .opt:hover { background: rgba(226, 168, 43, .25); }
+  .opt .k { font-family: var(--slab); color: var(--red); }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt:has(input:checked) { background: var(--maroon); color: var(--kain); }
+  .opt:has(input:checked) .k { color: var(--gold); }
+  .opt:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 3px; }
+  .opt.ok { background: var(--gold) !important; color: var(--ink) !important; }
+  .opt.ok .k { color: var(--maroon) !important; }
+  .opt.bad { background: #F1CFCB !important; color: var(--ink) !important; border-color: var(--red); }
+  .feedback { margin-top: 16px; padding: 14px 16px; border-left: 8px solid var(--gold); background: var(--kain); min-height: 3.2em; }
+  .feedback.bad { border-left-color: var(--red); }
+  .feedback b { font-family: var(--slab); font-weight: 400; color: var(--maroon); }
+
+  /* ===== 9. HOTS ===== */
+  .hots { display: grid; gap: 24px; margin-top: 22px; align-items: start; }
+  @media (min-width: 900px) { .hots { grid-template-columns: 1fr 1fr; gap: 34px; } }
+  .hq { background: var(--maroon); color: var(--kain); border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--gold); padding: clamp(20px, 3vw, 32px); }
+  .hq .lbl { font-family: var(--pix); color: var(--gold); margin-bottom: 10px; }
+  .hq blockquote { margin: 0; font-style: italic; font-size: clamp(1.15rem, 2.2vw, 1.5rem); line-height: 1.55; }
+  .title-flame { display: flex; align-items: center; gap: 14px; }
+  .guide h3 { font-size: 1.2rem; color: var(--maroon); margin-bottom: 6px; }
+  .aspects { list-style: none; margin: 12px 0 18px; padding: 0; display: grid; gap: 8px; }
+  .aspects li { position: relative; padding-left: 30px; }
+  .aspects li::before { content: ""; position: absolute; left: 0; top: .5em; width: 15px; height: 14px; background: var(--red); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  textarea, .field input { width: 100%; background: var(--surface); border: 3px solid var(--ink); padding: 10px 12px; border-radius: 0; }
+  textarea { min-height: 130px; resize: vertical; line-height: 1.55; }
+  .counter { font-family: var(--pix); font-size: .95rem; color: var(--maroon); margin: 6px 0 0; }
+
+  /* ===== 10. Refleksi ===== */
+  .refl { max-width: 760px; margin-top: 20px; }
+  .field { display: grid; gap: 6px; margin-bottom: 16px; }
+  .field label { font-family: var(--pix); font-weight: 600; color: var(--maroon); }
+  .field input::placeholder, textarea::placeholder { color: rgba(29, 20, 22, .5); }
+  .result { margin-top: 18px; }
+  .result[hidden] { display: none; }
+  .result h3 { font-size: 1.4rem; color: var(--maroon); margin-bottom: 8px; }
+  .result textarea { min-height: 150px; background: var(--kain); }
+  .site-foot { margin: 26px 0 0; font-size: .9rem; color: rgba(238, 240, 234, .7); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pbtn, .node::after, .prog i { transition: none; }
+  }
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px;color:#fff;background:#4A1218">Halaman ini memerlukan JavaScript untuk menampilkan slide dan animasi pixel.</p></noscript>
+
+<div class="app">
+  <header class="top">
+    <div class="marawa" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="top-row">
+      <a class="brand" href="#/beranda" data-go="beranda"><span class="logo" aria-hidden="true"></span>Perang Padri</a>
+      <div class="top-right">
+        <span class="count" id="count" aria-hidden="true">01 / 10</span>
+        <button class="pbtn" id="menuBtn" aria-haspopup="dialog" aria-expanded="false">Daftar slide</button>
+      </div>
+    </div>
+  </header>
+  <div class="strip" aria-hidden="true"></div>
+
+  <main class="stage" id="stage">
+
+    <!-- 1. BERANDA -->
+    <section class="slide dark" id="beranda" data-title="Beranda" aria-label="Beranda">
+      <div class="inner">
+        <div class="hero-grid">
+          <div class="hero-text">
+            <h1 tabindex="-1">Tuanku Imam Bonjol vs Belanda</h1>
+            <p class="sub">Perjuangan Bonjol melawan kolonialisme</p>
+            <p class="lede">Eksplorasi mendalam mengenai Perang Padri, perjuangan Tuanku Imam Bonjol, serta perlawanan masyarakat Minangkabau terhadap perluasan kekuasaan Belanda di Sumatra Barat.</p>
+            <div class="cta">
+              <button class="pbtn" data-go="tujuan">Mulai belajar</button>
+              <button class="pbtn ghost" data-go="simulasi">Lihat simulasi</button>
+            </div>
+          </div>
+          <figure class="screen" aria-label="Ilustrasi pixel Benteng Bonjol di atas bukit, dengan bendera Padri berkibar">
+            <canvas id="cv-hero" width="256" height="144"></canvas>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TUJUAN -->
+    <section class="slide light" id="tujuan" data-title="Tujuan Pembelajaran" aria-label="Tujuan pembelajaran">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Tujuan pembelajaran</h2>
+          <p>Poin-poin capaian yang harus dikuasai melalui web sejarah interaktif ini.</p>
+        </header>
+        <div class="goal-grid" id="goalGrid"></div>
+      </div>
+    </section>
+
+    <!-- 3. MATERI -->
+    <section class="slide light" id="materi" data-title="Materi" aria-label="Materi pembelajaran">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Materi pembelajaran</h2>
+          <p>Pelajari latar belakang, perkembangan konflik, tokoh, strategi, hingga akhir perjuangan Tuanku Imam Bonjol.</p>
+        </header>
+        <div class="tabs" id="materiTabs"></div>
+        <div class="duo" id="materiPanel" role="tabpanel" aria-live="polite">
+          <div><h3 id="mTitle"></h3><p id="mText"></p></div>
+          <figure class="frame"><canvas id="cv-materi" width="256" height="144"></canvas></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TIMELINE -->
+    <section class="slide light" id="timeline" data-title="Timeline" aria-label="Timeline peristiwa">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Timeline peristiwa</h2>
+          <p>Kronologi penting perjuangan Tuanku Imam Bonjol dalam Perang Padri. Pilih satu peristiwa untuk melihat rinciannya.</p>
+        </header>
+        <div class="rail" id="rail" data-noswipe></div>
+        <div class="duo" role="tabpanel" aria-live="polite">
+          <div><div class="tl-year" id="tlYear"></div><p id="tlText"></p></div>
+          <figure class="frame"><canvas id="cv-tl" width="256" height="144"></canvas></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ANALISIS -->
+    <section class="slide light" id="analisis" data-title="Analisis Perlawanan" aria-label="Analisis perlawanan">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Analisis perlawanan Tuanku Imam Bonjol vs Belanda</h2>
+          <p>Berdasarkan beberapa aspek penting dalam menganalisis perlawanan sejarah.</p>
+        </header>
+        <div class="ana">
+          <div class="ana-list" id="anaList" data-noswipe></div>
+          <div class="panel ana-panel" role="tabpanel" aria-live="polite">
+            <h3 id="anaTitle"></h3>
+            <div class="blocks" id="anaBlocks"></div>
+            <div class="versus" id="anaVs" hidden>
+              <canvas id="cv-vs1" class="pixel-ico" width="20" height="18" aria-hidden="true"></canvas>
+              <span class="vs">vs</span>
+              <canvas id="cv-vs2" class="pixel-ico" width="20" height="18" aria-hidden="true"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SIMULASI -->
+    <section class="slide night" id="simulasi" data-title="Simulasi" aria-label="Simulasi interaktif">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Simulasi interaktif: pengepungan Benteng Bonjol</h2>
+          <p>Visualisasi interaktif mengenai posisi pertahanan Bonjol dan perkembangan pengepungan yang dilakukan Belanda.</p>
+        </header>
+        <div class="sim">
+          <div>
+            <div class="screen-wrap">
+              <figure class="screen" aria-label="Animasi pixel pengepungan Benteng Bonjol">
+                <span class="badge" id="badge">1820-an</span>
+                <canvas id="cv-sim" width="256" height="144"></canvas>
+              </figure>
+            </div>
+            <div class="controls" data-noswipe>
+              <button class="pbtn" id="simPlay">Mulai Simulasi</button>
+              <button class="pbtn ghost" id="simReset">Ulangi</button>
+              <button class="pbtn ghost small" id="simSpeed" aria-label="Ganti kecepatan">Kecepatan 1x</button>
+            </div>
+            <label class="sr-only" for="scrub">Posisi simulasi</label>
+            <input class="scrub" id="scrub" type="range" min="0" max="26" step="0.05" value="0" data-noswipe>
+          </div>
+          <div class="dpanel">
+            <ol class="phases" id="phases"></ol>
+            <div class="cap" aria-live="polite">
+              <h3 id="capT"></h3>
+              <p id="capD"></p>
+              <p class="note">Ilustrasi simbolis untuk membantu memahami alur peristiwa, bukan rekonstruksi detail pertempuran.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. AKTIVITAS -->
+    <section class="slide light" id="aktivitas" data-title="Aktivitas" aria-label="Aktivitas mandiri dan kelompok">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Aktivitas mandiri &amp; kelompok</h2>
+          <p>Tugas praktis untuk memperdalam pemahaman sejarah perjuangan Tuanku Imam Bonjol.</p>
+        </header>
+        <div class="act">
+          <div class="panel">
+            <h3>Diskusi analisis sejarah</h3>
+            <p style="margin:0">Centang setiap langkah yang sudah kelompok Anda selesaikan.</p>
+            <ol class="checks" id="actChecks" style="padding-left:0"></ol>
+            <div class="prog" id="actProg" aria-hidden="true"></div>
+            <p class="prog-text" id="actText" aria-live="polite">0 dari 5 langkah selesai</p>
+          </div>
+          <div class="group-art" aria-hidden="true"><canvas id="cv-group" class="pixel-ico" width="64" height="40"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. LATIHAN -->
+    <section class="slide light" id="latihan" data-title="Latihan Soal" aria-label="Latihan soal">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Latihan soal</h2>
+          <p>Uji pemahaman Anda mengenai materi Tuanku Imam Bonjol vs Belanda.</p>
+        </header>
+        <div class="quiz panel">
+          <h3 id="qText"></h3>
+          <div class="opts" id="qOpts" role="radiogroup" aria-labelledby="qText"></div>
+          <div class="controls"><button class="pbtn" id="qCheck">Periksa jawaban</button><button class="pbtn ghost" id="qReset" style="color:var(--maroon);border-color:var(--maroon);box-shadow:4px 4px 0 rgba(74,18,24,.3)">Coba lagi</button></div>
+          <div class="feedback" id="qFb" aria-live="polite">Pilih satu jawaban, lalu tekan Periksa jawaban.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. HOTS -->
+    <section class="slide light" id="hots" data-title="Analisis Kritis (HOTS)" aria-label="Analisis kritis">
+      <div class="inner">
+        <header class="s-head">
+          <div class="title-flame"><canvas id="cv-flame" class="pixel-ico" width="8" height="10" aria-hidden="true"></canvas><h2 tabindex="-1">Analisis kritis (HOTS)</h2></div>
+          <p>Pertanyaan tingkat tinggi untuk melatih nalar kritis sejarah.</p>
+        </header>
+        <div class="hots">
+          <div class="hq">
+            <div class="lbl">Pertanyaan tantangan HOTS</div>
+            <blockquote>&ldquo;Mengapa perjuangan Tuanku Imam Bonjol tetap memiliki arti penting bagi sejarah Indonesia meskipun pada akhirnya Belanda berhasil menguasai Bonjol?&rdquo;</blockquote>
+          </div>
+          <div class="guide">
+            <h3>Panduan analisis</h3>
+            <p style="margin:0">Tinjau dari aspek berikut:</p>
+            <ul class="aspects">
+              <li>Keberanian pemimpin</li>
+              <li>Ketahanan masyarakat</li>
+              <li>Strategi menghadapi kolonialisme</li>
+              <li>Pengaruh perjuangan tersebut terhadap sejarah perlawanan rakyat Indonesia</li>
+            </ul>
+            <label class="sr-only" for="hotsAns">Tulis analisis Anda</label>
+            <textarea id="hotsAns" placeholder="Tulis analisis Anda di sini..."></textarea>
+            <p class="counter" id="hotsCount" aria-live="polite">0 kata</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. REFLEKSI -->
+    <section class="slide dark" id="refleksi" data-title="Refleksi" aria-label="Refleksi pembelajaran">
+      <div class="inner">
+        <header class="s-head">
+          <h2 tabindex="-1">Refleksi pembelajaran</h2>
+          <p>Bagikan kesan dan pelajaran bermakna yang Anda dapatkan setelah mempelajari perjuangan Tuanku Imam Bonjol.</p>
+        </header>
+        <div class="refl panel" style="color:var(--ink)">
+          <form id="reflForm" novalidate>
+            <div class="field"><label for="rNama">Nama lengkap &amp; kelas</label><input id="rNama" type="text" placeholder="Contoh: Budi Santoso / XI IPS 1" autocomplete="name"></div>
+            <div class="field"><label for="rJawab">Apa nilai perjuangan Tuanku Imam Bonjol yang paling penting menurut Anda?</label><textarea id="rJawab" placeholder="Tulis jawaban Anda..."></textarea></div>
+            <div class="controls" style="margin-top:0"><button type="submit" class="pbtn">Kirim refleksi</button><span id="rErr" role="alert" style="color:var(--red);font-weight:600"></span></div>
+          </form>
+          <div class="result" id="rResult" hidden>
+            <h3 id="rThanks"></h3>
+            <p>Jawaban Anda belum dikirim ke mana pun, hanya tampil di halaman ini. Salin teks berikut untuk dikumpulkan kepada guru.</p>
+            <label class="sr-only" for="rOut">Hasil refleksi</label>
+            <textarea id="rOut" readonly></textarea>
+            <div class="controls"><button class="pbtn" id="rCopy" type="button">Salin jawaban</button><button class="pbtn ghost" id="rAgain" type="button" style="color:var(--maroon);border-color:var(--maroon);box-shadow:4px 4px 0 rgba(74,18,24,.3)">Isi ulang</button><span id="rMsg" aria-live="polite" style="font-weight:600"></span></div>
+          </div>
+        </div>
+        <p class="site-foot">&copy; 2026 Tugas Sejarah Interaktif | Tema: Tuanku Imam Bonjol vs Belanda</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bottom">
+    <button class="pbtn" id="prev" aria-label="Slide sebelumnya"><span class="tri l" aria-hidden="true"></span><span class="txt">Sebelumnya</span></button>
+    <nav class="dots" id="dots" aria-label="Navigasi slide"></nav>
+    <button class="pbtn" id="next" aria-label="Slide berikutnya"><span class="txt">Berikutnya</span><span class="tri r" aria-hidden="true"></span></button>
+  </footer>
+
+  <div class="menu" id="menu" hidden role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+    <div class="menu-box">
+      <h2 id="menuTitle">Daftar slide</h2>
+      <ol id="menuList"></ol>
+      <button class="pbtn small" id="menuClose">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   MESIN ANIMASI PIXEL (kanvas 256x144, diperbesar dengan CSS)
+   Seluruh adegan dihitung sebagai fungsi waktu, sehingga bisa di-scrub.
+   ===================================================================== */
+//#SCENE-START
+const PW = 256, PH = 144, T_END = 26;
+const PHASE_AT = [0, 4.5, 9, 18.4];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ss = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+const hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mix = (a, b, t) => { const A = hx(a), B = hx(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+let G = null;
+const R = (x, y, w, h, c) => { G.fillStyle = c; G.fillRect(Math.round(x), Math.round(y), w, h); };
+
+const MARAWA = [['#E2A82B', 3], ['#B3202A', 3], ['#1D1416', 2]];
+const BELANDA = [['#C4262E', 3], ['#F4F4F0', 3], ['#1F3F8F', 3]];
+function flag(x, y, cols, w, t, ph) {
+  for (let c = 0; c < w; c++) {
+    let yy = y + Math.round(Math.sin(t * 5 + c * 0.55 + ph) * 1.3 * (c / w));
+    cols.forEach(([col, hh]) => { R(x + c, yy, 1, hh, col); yy += hh; });
+  }
+}
+function puff(x, y, age, max, d) {
+  if (age < 0 || age > max) return;
+  const k = age / max, s = 2 + Math.round(k * 8);
+  G.globalAlpha = 0.55 * (1 - k);
+  R(x + k * 7 - s / 2, y - k * 11 - s / 2, s, s, mix('#D9D3C7', '#8A7F86', d));
+  G.globalAlpha = 1;
+}
+function cycleAge(st, s, e, p, off) { if (st < s + off || st > e) return -1; return (st - s - off) % p; }
+
+function padri(x, y, o) {            // kaki di (x,y), menghadap kiri
+  const yy = y - (o.bob ? 1 : 0);
+  R(x, yy - 9, 4, 2, '#EEF0EA');
+  if (o.leader) R(x, yy - 8, 4, 1, '#E2A82B');
+  R(x + 1, yy - 7, 2, 2, '#C98B5E');
+  R(x, yy - 5, 4, 4, '#EEF0EA');
+  R(x, yy - 3, 4, 1, '#B3202A');
+  R(x, yy - 1, 1, 1, '#1D1416'); R(x + 3, yy - 1, 1, 1, '#1D1416');
+  if (o.fire) { R(x - 6, yy - 5, 7, 1, '#3B2A1A'); R(x - 9, yy - 6, 3, 3, '#FFD24A'); }
+  else { R(x - 1, yy - 13, 1, 12, '#6B4B2A'); R(x - 1, yy - 14, 1, 1, '#CFCFCF'); }
+}
+function dutch(x, y, o) {            // menghadap kanan
+  const yy = y - (o.bob ? 1 : 0);
+  R(x + 1, yy - 10, 2, 3, '#1D1416'); R(x + 1, yy - 11, 2, 1, '#EEF0EA');
+  R(x + 1, yy - 7, 2, 2, '#D9A07A');
+  R(x, yy - 5, 4, 3, '#1F3F8F');
+  R(x + 1, yy - 5, 1, 1, '#EEF0EA'); R(x + 2, yy - 4, 1, 1, '#EEF0EA');
+  R(x, yy - 2, 1, 2, '#E6E3D8'); R(x + 3, yy - 2, 1, 2, '#E6E3D8');
+  if (o.aim) {
+    R(x + 3, yy - 5, 7, 1, '#3B2A1A'); R(x + 10, yy - 5, 1, 1, '#CFCFCF');
+    if (o.fire) R(x + 11, yy - 6, 3, 3, '#FFD24A');
+  } else { R(x + 4, yy - 9, 1, 8, '#3B2A1A'); R(x + 4, yy - 10, 1, 1, '#CFCFCF'); }
+}
+function bamboo(x, top, k, t) {
+  for (let y = top; y < PH; y += 2) {
+    const f = (PH - y) / (PH - top), off = Math.round(Math.sin(t * 1.1 + k) * 2.2 * f * f);
+    R(x + off, y, 2, 2, '#1F4D33');
+    if ((y - top) % 12 === 0) R(x + off - 1, y, 4, 1, '#2F6E47');
+    if (y === top + 8 || y === top + 20 || y === top + 32) {
+      R(x + off - 5, y, 5, 1, '#2A6B40'); R(x + off + 2, y - 1, 5, 1, '#2A6B40'); R(x + off - 3, y + 1, 3, 1, '#2A6B40');
+    }
+  }
+}
+
+const SHOTS = [];
+for (let k = 0; k < 8; k++) SHOTS.push({ t0: 9.2 + k * 1.15, cx: k % 2 ? 110 : 92, tx: 176 + ((k * 5) % 11), ty: 73 + ((k * 3) % 9) });
+const SOL = [];
+for (let i = 0; i < 12; i++) SOL.push({ tx: 128 + (i % 6) * 6 + Math.floor(i / 6) * 3, ty: 124 + Math.floor(i / 6) * 7, arrive: 6.5 + (i % 6) * 0.25 + Math.floor(i / 6) * 0.9, ex: 177 + (i % 6) * 2.6, ey: 84 + (i % 2) });
+const DEF = [{ x: 166, y: 70 }, { x: 194, y: 70 }, { x: 208, y: 70 }, { x: 214, y: 70, leader: 1 }, { x: 222, y: 70 }, { x: 160, y: 58 }, { x: 226, y: 58 }];
+
+function drawScene(ctx, t, st, o) {
+  o = o || {};
+  G = ctx; ctx.imageSmoothingEnabled = false;
+  const d = o.d !== undefined ? o.d : ss(8, 21, st);
+  const k6 = d * 0.6;
+
+  // langit
+  const skyTop = mix('#5FA8BF', '#2B0F1E', d), skyBot = mix('#F7DFA6', '#E0603A', d);
+  for (let i = 0; i < 24; i++) R(0, i * 4, PW, 4, mix(skyTop, skyBot, i / 23));
+  const sy = 30 + d * 50, sc = mix('#FFF3C4', '#FFB05A', d);
+  ctx.globalAlpha = 0.25;
+  for (let yy = -13; yy <= 13; yy++) { const w = Math.round(Math.sqrt(169 - yy * yy)); R(118 - w, sy + yy, w * 2, 1, sc); }
+  ctx.globalAlpha = 1;
+  for (let yy = -9; yy <= 9; yy++) { const w = Math.round(Math.sqrt(81 - yy * yy)); R(118 - w, sy + yy, w * 2, 1, sc); }
+  const cl = mix('#FFF6DF', '#C77A66', d);
+  for (let k = 0; k < 4; k++) {
+    const cx = ((t * 2.2 + k * 83) % (PW + 70)) - 40, cy = 10 + k * 13;
+    ctx.globalAlpha = 0.9; R(cx, cy + 3, 26, 4, cl); R(cx + 4, cy + 1, 14, 3, cl); R(cx + 10, cy - 1, 8, 2, cl); ctx.globalAlpha = 1;
+  }
+  if (d < 0.45) {
+    for (let k = 0; k < 3; k++) {
+      const bx = ((t * 14 + k * 70) % (PW + 30)) - 15, by = 26 + k * 9 + Math.sin(t * 2 + k) * 2, up = Math.floor(t * 5 + k) % 2;
+      const c = '#2B2A33';
+      if (up) { R(bx, by, 1, 1, c); R(bx + 1, by + 1, 1, 1, c); R(bx + 2, by, 1, 1, c); }
+      else { R(bx, by + 1, 1, 1, c); R(bx + 1, by, 1, 1, c); R(bx + 2, by + 1, 1, 1, c); }
+    }
+  }
+
+  // pegunungan jauh
+  const farC = mix('#6C93A2', '#5A2236', d);
+  for (let x = 0; x < PW; x++) {
+    let y = 76 - Math.max(0, 30 - Math.abs(x - 62) * 0.62) - Math.max(0, 18 - Math.abs(x - 222) * 0.7) - (5 * Math.sin(x * 0.04 + 1) + 3 * Math.sin(x * 0.11));
+    y = Math.round(y); R(x, y, 1, 100 - y, farC);
+  }
+  // punggung hutan
+  const ridge = x => 92 - 5 * Math.sin(x * 0.05 + 2) - 3 * Math.sin(x * 0.14);
+  const midC = mix('#3E7A55', '#2A2230', d * 0.8), treeC = mix('#2C5E40', '#1D1A24', d * 0.8);
+  for (let x = 0; x < PW; x++) { const y = Math.round(ridge(x)); R(x, y, 1, 122 - y, midC); }
+  for (let i = 0; i < 46; i++) {
+    const tx = Math.round(hash(i + 1) * PW), ty = Math.round(ridge(tx)) + 2 + Math.round(hash(i + 50) * 8);
+    R(tx - 1, ty - 2, 4, 2, treeC); R(tx, ty - 3, 2, 1, treeC);
+  }
+
+  // bukit benteng
+  const hillY = x => { const dx = Math.abs(x - 196); return dx <= 38 ? 84 : 84 + (dx - 38) * 0.95; };
+  const soil = mix('#6B4F2E', '#3B2630', k6), grass = mix('#4C8A3F', '#2E4A35', k6), soil2 = mix('#573E22', '#2D1C26', k6);
+  for (let x = 116; x < PW; x++) { const hy = Math.round(hillY(x)); if (hy < 122) { R(x, hy, 1, 122 - hy, soil); R(x, hy, 1, 2, grass); } }
+  for (let i = 0; i < 70; i++) {
+    const px = Math.round(118 + hash(i + 100) * 138), py = Math.round(86 + hash(i + 200) * 34);
+    if (py > hillY(px) + 3) R(px, py, 1, 1, soil2);
+  }
+  for (let x = 120; x <= 158; x++) R(x, Math.round(hillY(x)) - 1, 1, 3, mix('#B89A63', '#6D5A55', k6));
+
+  // tanah datar
+  R(0, 121, PW, 23, mix('#4A8F45', '#2F4A3A', k6));
+  R(0, 134, PW, 10, mix('#3D7A3C', '#27402F', k6));
+  R(0, 126, PW, 3, mix('#A58B59', '#5B4A4A', k6));
+  for (let i = 0; i < 60; i++) { const gx = hash(i + 300) * PW, gy = 122 + hash(i + 400) * 20, sw = Math.round(Math.sin(t * 2 + i)); R(gx + sw, gy, 1, 2, mix('#6FB05A', '#3C5A45', k6)); }
+
+  // perkemahan Belanda
+  if (st >= 7) {
+    for (const [tx0, tw] of [[10, 26], [40, 22]]) {
+      for (let r = 0; r < 14; r++) {
+        const w = Math.round(tw * (r + 1) / 14), x0 = tx0 + Math.round((tw - w) / 2);
+        R(x0, 110 + r, w, 1, mix('#D8C9A6', '#8F7C7C', k6));
+        R(x0 + Math.round(w / 2), 110 + r, Math.round(w / 2), 1, mix('#B9A883', '#6E5B63', k6));
+      }
+      R(tx0 + Math.round(tw / 2) - 2, 120, 4, 4, '#2A1A12');
+    }
+    const fl = Math.floor(t * 9);
+    R(70, 124, 5, 2, '#3B2A1A');
+    R(71, 121 - (fl % 2), 3, 3, '#D9421F'); R(72, 120 - (fl % 3), 1, 3, '#FFD24A');
+  }
+  if (st >= 5.5) { R(64, 98, 1, 28, '#3B2A1A'); flag(65, 98, BELANDA, 14, t, 1.2); }
+
+  // benteng: rumah gadang di dalam
+  const bx = 184;
+  R(bx + 3, 56, 30, 14, mix('#5B2B1A', '#3A1A1E', d * 0.5));
+  for (let i = 0; i < 5; i++) R(bx + 6 + i * 6, 60, 3, 3, '#E2A82B');
+  for (let cx = 0; cx < 36; cx++) {
+    const e = Math.min(cx, 35 - cx), h = 5 + (e < 7 ? Math.round((7 - e) * (7 - e) * 0.2) : 0);
+    R(bx + cx, 56 - h, 1, h, mix('#7B1D24', '#4A1218', d * 0.4)); R(bx + cx, 56 - h, 1, 1, '#E2A82B');
+  }
+  R(bx, 54, 36, 2, '#4A1218');
+
+  // dinding
+  const stone = mix('#9A8868', '#5E4C56', d * 0.5), stone2 = mix('#B7A583', '#76616A', d * 0.5), mortar = mix('#6E6049', '#3F3038', d * 0.5);
+  const WL = 162, WR = 230, WT = 70, WB = 84, BR0 = 172, BR1 = 190;
+  const breach = ss(18.4, 19.4, st), broke = st >= 18.4;
+  const topAt = x => (x >= BR0 && x < BR1) ? WB - Math.round((WB - WT) * (1 - breach)) : WT;
+  for (let x = WL; x < WR; x++) { const tp = topAt(x); if (tp < WB) { R(x, tp, 1, WB - tp, stone); if (tp === WT) R(x, WT, 1, 1, stone2); } }
+  [73, 77, 81].forEach((yy, ri) => {
+    for (let x = WL; x < WR; x++) if (yy >= topAt(x)) R(x, yy, 1, 1, mortar);
+    for (let x = WL + (ri % 2) * 3; x < WR; x += 6) if (yy - 3 >= topAt(x)) R(x, yy - 3, 1, 3, mortar);
+  });
+  for (let x = WL; x < WR; x += 8) { if (!(broke && x + 5 > BR0 && x < BR1)) R(x, WT - 3, 5, 3, stone2); }
+  if (broke) for (let x = BR0; x < BR1; x++) R(x, WB - 2 - Math.floor(hash(x) * 3) * breach, 1, 3, mortar);
+  // gerbang
+  R(196, 75, 8, 9, '#2A1A12'); R(197, 74, 6, 1, '#2A1A12'); R(199, 75, 1, 9, '#4A3220');
+  // menara
+  for (const tx of [WL - 4, WR - 8]) {
+    R(tx, 58, 12, 26, stone); R(tx, 55, 3, 3, stone2); R(tx + 4, 55, 3, 3, stone2); R(tx + 8, 55, 3, 3, stone2);
+    R(tx + 5, 64, 2, 5, '#1D1416');
+    for (const yy of [66, 72, 78]) R(tx, yy, 12, 1, mortar);
+  }
+  R(WL + 1, 43, 1, 15, '#3B2A1A'); R(WR - 4, 43, 1, 15, '#3B2A1A');
+  const pTop = 44 + Math.round(14 * ss(23, 24, st));
+  if (pTop < 56) { flag(WL + 2, pTop, MARAWA, 14, t, 0); flag(WR - 3, pTop, MARAWA, 14, t, 2); }
+  if (st >= 24) flag(WL + 2, 58 - Math.round(14 * ss(24, 25.2, st)), BELANDA, 14, t, 0);
+  // bekas tembakan
+  SHOTS.forEach(s => {
+    if (st > s.t0 + 0.85 && !(broke && s.tx >= BR0 && s.tx < BR1 && breach > 0.6)) {
+      R(s.tx - 1, s.ty - 1, 3, 3, '#3B3023'); R(s.tx, s.ty, 1, 1, '#1D1416'); R(s.tx - 2, s.ty, 1, 1, '#B9A98A');
+    }
+  });
+
+  // meriam Belanda
+  if (st >= 5) {
+    const roll = ss(5, 8, st);
+    [92, 110].forEach((cx, ci) => {
+      let rec = 0;
+      SHOTS.forEach(s => { if (s.cx === cx && st >= s.t0 && st < s.t0 + 0.2) rec = 2 * (1 - (st - s.t0) / 0.2); });
+      const x = -24 + (cx + 24) * roll, gy = 125;
+      R(x - rec, gy - 7, 12, 3, '#2D2D33'); R(x + 1 - rec, gy - 7, 10, 1, '#5A5A63');
+      R(x + 1, gy - 5, 8, 3, '#5C3B1E'); R(x + 2, gy - 5, 5, 5, '#4A2F17'); R(x + 3, gy - 4, 3, 3, '#7A5230'); R(x + 4, gy - 3, 1, 1, '#1D1416');
+    });
+  }
+
+  // pasukan
+  const units = [];
+  if (st < 20.5) {
+    DEF.forEach((u, j) => {
+      let x = u.x;
+      if (st >= 20.5) x += (st - 20.5) * 5;
+      const age = cycleAge(st, 9.8, 18.3, 2.9, j * 0.41 + 0.2);
+      units.push({ y: u.y, draw: () => padri(x, u.y, { leader: u.leader, fire: age >= 0 && age < 0.14 }), smoke: () => puff(x - 9, u.y - 5, age, 1.5, d) });
+    });
+  } else if (st < 23.8) {
+    DEF.forEach(u => { const x = u.x + (st - 20.5) * 5; units.push({ y: u.y, draw: () => padri(x, u.y, { leader: u.leader }) }); });
+  }
+  if (st >= 4.5) {
+    SOL.forEach((s, i) => {
+      let x, y, moving = false;
+      if (st < s.arrive) { const sx = -14 - i * 5, u = (st - 4.5) / (s.arrive - 4.5); x = sx + (s.tx - sx) * u; y = s.ty; moving = true; }
+      else { x = s.tx; y = s.ty; }
+      const a0 = 19.2 + i * 0.14;
+      if (st >= a0) { const u = clamp((st - a0) / 4.2); x = s.tx + (s.ex - s.tx) * u; y = s.ty + (s.ey - s.ty) * u; moving = u < 1; }
+      const bob = moving && Math.floor(st * 6 + i) % 2 === 0;
+      const aiming = !moving && st >= 8 && st < 18.4;
+      const age = aiming ? cycleAge(st, 9.2, 18.35, 3.4, (i * 0.23) % 3.4) : -1;
+      units.push({ y, draw: () => dutch(x, y, { bob, aim: aiming, fire: age >= 0 && age < 0.14 }), smoke: () => puff(x + 10, y - 5, age, 1.6, d) });
+    });
+  }
+  units.sort((a, b) => a.y - b.y);
+  units.forEach(u => u.draw());
+  units.forEach(u => { if (u.smoke) u.smoke(); });
+
+  // meriam menembak: asap, bola, dampak
+  SHOTS.forEach((s, k) => {
+    if (st < s.t0) return;
+    const mx = s.cx + 12, my = 118, arr = s.t0 + 0.85;
+    if (st < s.t0 + 0.12) { R(mx, my - 2, 5, 4, '#FFF1B8'); R(mx + 2, my - 3, 3, 6, '#FFD24A'); }
+    puff(mx + 2, my, st - s.t0, 2.2, d);
+    if (st < arr) {
+      const u = (st - s.t0) / 0.85;
+      for (let j = 3; j >= 0; j--) {
+        const uu = u - j * 0.04; if (uu < 0) continue;
+        const px = mx + (s.tx - mx) * uu, py = my + (s.ty - my) * uu - 26 * Math.sin(Math.PI * uu);
+        G.globalAlpha = j ? 0.3 : 1; R(px, py, 2, 2, j ? '#9B948C' : '#1D1416'); G.globalAlpha = 1;
+      }
+    } else {
+      const dt = st - arr;
+      if (dt < 0.1) R(s.tx - 2, s.ty - 2, 5, 5, '#FFE9A8');
+      if (dt < 0.7) {
+        for (let j = 0; j < 7; j++) {
+          const vx = (hash(k * 10 + j) - 0.5) * 34, vy = -(10 + hash(k * 10 + j + 0.3) * 20);
+          R(s.tx + vx * dt, s.ty + vy * dt + 60 * dt * dt, 1, 1, j % 2 ? '#B9A98A' : '#6E6049');
+        }
+      }
+      puff(s.tx, s.ty, dt, 1.4, d);
+    }
+  });
+  if (st >= 18.4 && st < 22) for (let j = 0; j < 6; j++) puff(176 + j * 3, 82, (st - 18.4) - j * 0.25, 2.4, d);
+
+  // rumpun bambu di depan
+  bamboo(6, 50, 0, t); bamboo(13, 40, 1, t); bamboo(20, 58, 2, t); bamboo(238, 46, 3, t); bamboo(246, 58, 4, t);
+
+  // senja
+  if (d > 0) { ctx.globalAlpha = d * 0.16; R(0, 0, PW, PH, '#2A0A1E'); ctx.globalAlpha = 1; }
+}
+
+function drawExile(ctx, t) {
+  G = ctx; ctx.imageSmoothingEnabled = false;
+  for (let i = 0; i < 20; i++) R(0, i * 4, PW, 4, mix('#3A1230', '#E8803A', i / 19));
+  for (let yy = -14; yy <= 0; yy++) { const w = Math.round(Math.sqrt(196 - yy * yy)); R(128 - w, 80 + yy, w * 2, 1, '#FFD27A'); }
+  for (let i = 0; i < 16; i++) R(0, 80 + i * 4, PW, 4, mix('#7A2A3A', '#1A1030', i / 15));
+  G.globalAlpha = 0.6;
+  for (let j = 0; j < 11; j++) { const w = Math.max(2, Math.round(18 - j * 1.4 + Math.sin(t * 3 + j) * 3)); R(128 - w, 82 + j * 5, w * 2, 1, '#FFD27A'); }
+  G.globalAlpha = 1;
+  for (let i = 0; i < 30; i++) { if (Math.floor(t * 2 + i) % 3 === 0) R(hash(i) * PW, 84 + hash(i + 9) * 58, 2, 1, '#F4C98A'); }
+  const x = ((t * 4) % (PW + 60)) - 40, y = 104 + Math.round(Math.sin(t * 1.5));
+  R(x, y, 28, 5, '#1D1416'); R(x + 2, y + 5, 24, 1, '#1D1416'); R(x + 13, y - 24, 1, 24, '#1D1416');
+  R(x + 14, y - 22, 11, 16, '#E6D3B0'); R(x + 6, y - 14, 6, 9, '#E6D3B0');
+  R(206, 116, 50, 28, '#26161C');
+  for (let j = 0; j < 30; j++) R(228 + Math.round(Math.sin(j * 0.12) * 3), 116 - j, 2, 1, '#150C10');
+  const cx = 228 + Math.round(Math.sin(30 * 0.12) * 3), cy = 86;
+  [[1, -.3], [1.3, .15], [-1, -.3], [-1.3, .15], [.3, -1], [-.4, -.9]].forEach(([dx, dy]) => {
+    for (let s = 0; s < 11; s++) R(cx + s * dx, cy + s * dy + s * s * 0.07 + Math.sin(t * 2) * (s / 10), 2, 1, '#150C10');
+  });
+}
+
+function drawGroup(ctx) {
+  G = ctx;
+  R(6, 26, 52, 4, '#8A6A3E'); R(9, 30, 3, 9, '#5C3B1E'); R(52, 30, 3, 9, '#5C3B1E');
+  [[8, '#B3202A'], [20, '#E2A82B'], [32, '#EEF0EA'], [44, '#1F3F8F']].forEach(([x, c], i) => {
+    R(x, 12, 8, 7, '#1D1416'); R(x + 1, 13, 6, 6, i % 2 ? '#C98B5E' : '#D9A07A'); R(x, 19, 8, 7, c);
+    R(x + 2, 15, 1, 1, '#1D1416'); R(x + 5, 15, 1, 1, '#1D1416');
+  });
+  R(14, 24, 8, 2, '#EEF0EA'); R(30, 24, 10, 2, '#EEF0EA'); R(46, 24, 7, 2, '#EEF0EA');
+}
+//#SCENE-END
+
+/* ===== Sprite ikon kecil dari peta karakter ===== */
+const PAL = { k: '#1D1416', w: '#EEF0EA', r: '#B3202A', g: '#E2A82B', m: '#4A1218', b: '#B89A63', s: '#C98B5E', d: '#2A1A12' };
+const MAPS = {
+  buku: ['.kkkkkkkkkk.', 'kmmmmkkmmmmk', 'kmwwmkkmwwmk', 'kmwwmkkmwwmk', 'kmwwmkkmwwmk', 'kmwwmkkmwwmk', 'kmwwmkkmwwmk', 'kmmmmkkmmmmk', '.kkkkkkkkkk.'],
+  benteng: ['kk.kk..kk.kk', 'kkkkkkkkkkkk', 'kbbbbbbbbbbk', 'kbbkbbbbkbbk', 'kbbbbbbbbbbk', 'kbbbbkkbbbbk', 'kbbbkddkbbbk', 'kbbbkddkbbbk', 'kkkkkkkkkkkk'],
+  tokoh: ['....wwww....', '...wwwwww...', '...wssssw...', '...ssssss...', '...ssssss...', '....ssss....', '..wwwwwwww..', '.wwwwrrwwww.', 'wwwwwrrwwwww', 'wwwwwwwwwwww'],
+  bintang: ['.....gg.....', '.....gg.....', '....gggg....', 'gggggggggggg', '.gggggggggg.', '..gggggggg..', '..gggggggg..', '.gggg..gggg.', '.ggg....ggg.', 'gg........gg'],
+  api: ['....r...', '...rr...', '...rrr..', '..rrrgr.', '..rrggr.', '.rrrggrr', '.rrgggrr', '.rrgwgrr', '.rrgggrr', '..rrrrr.']
+};
+function drawMap(cv, map) {
+  const x = cv.getContext('2d'); x.clearRect(0, 0, cv.width, cv.height);
+  map.forEach((row, j) => [...row].forEach((ch, i) => { const c = PAL[ch]; if (c) { x.fillStyle = c; x.fillRect(i, j, 1, 1); } }));
+}
+function mapCanvas(map, scale) {
+  const c = document.createElement('canvas'); c.width = map[0].length; c.height = map.length;
+  c.className = 'pixel-ico'; c.style.width = c.width * scale + 'px'; c.style.height = c.height * scale + 'px';
+  drawMap(c, map); return c;
+}
+
+/* =====================================================================
+   NAVIGASI SLIDE
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const slides = $$('.slide');
+const ids = slides.map(s => s.id);
+const seen = new Set();
+let cur = -1;
+
+const dots = $('#dots'), menuList = $('#menuList');
+slides.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.className = 'dot'; b.setAttribute('aria-label', `Slide ${i + 1}: ${s.dataset.title}`); b.title = s.dataset.title;
+  b.addEventListener('click', () => go(i)); dots.appendChild(b);
+  const li = document.createElement('li');
+  li.innerHTML = `<button><span>${String(i + 1).padStart(2, '0')}</span><span>${s.dataset.title}</span></button>`;
+  li.firstChild.addEventListener('click', () => { closeMenu(); go(i); });
+  menuList.appendChild(li);
+});
+
+function go(i, opt) {
+  i = clamp(i, 0, slides.length - 1);
+  if (i === cur) return;
+  const dir = i > cur ? 1 : -1, first = cur < 0;
+  if (!first) slides[cur].classList.remove('active');
+  cur = i; seen.add(i);
+  const el = slides[cur];
+  el.classList.add('active'); el.scrollTop = 0;
+  if (!first && !reduced && el.animate) el.animate([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
+  $('#count').textContent = `${String(cur + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+  $$('.dot').forEach((d, j) => { d.classList.toggle('on', j === cur); d.classList.toggle('seen', j !== cur && seen.has(j)); if (j === cur) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+  $$('#menuList button').forEach((b, j) => b.setAttribute('aria-current', j === cur ? 'true' : 'false'));
+  $('#prev').disabled = cur === 0; $('#next').disabled = cur === slides.length - 1;
+  try { history.replaceState(null, '', '#/' + ids[cur]); } catch (e) {}
+  document.title = `${el.dataset.title} | Tuanku Imam Bonjol vs Belanda`;
+  if (!first || (opt && opt.focus)) { const h = el.querySelector('h1,h2'); if (h) h.focus({ preventScroll: true }); }
+}
+$('#prev').addEventListener('click', () => go(cur - 1));
+$('#next').addEventListener('click', () => go(cur + 1));
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); go(ids.indexOf(g.dataset.go)); } });
+
+document.addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'Escape') { closeMenu(); return; }
+  if (!$('#menu').hidden) return;
+  const tg = e.target.tagName;
+  if (tg === 'INPUT' && e.target.type !== 'checkbox' && e.target.type !== 'radio' && e.target.type !== 'range') return;
+  if (tg === 'TEXTAREA') return;
+  if (e.target.type === 'range' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  else if (e.key === 'Home') { go(0); } else if (e.key === 'End') { go(slides.length - 1); }
+});
+
+let tx0 = 0, ty0 = 0, tOk = false;
+$('#stage').addEventListener('touchstart', e => { tOk = !e.target.closest('[data-noswipe],textarea,input'); tx0 = e.touches[0].clientX; ty0 = e.touches[0].clientY; }, { passive: true });
+$('#stage').addEventListener('touchend', e => {
+  if (!tOk) return;
+  const dx = e.changedTouches[0].clientX - tx0, dy = e.changedTouches[0].clientY - ty0;
+  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6) go(cur + (dx < 0 ? 1 : -1));
+}, { passive: true });
+
+const menu = $('#menu');
+function openMenu() { menu.hidden = false; $('#menuBtn').setAttribute('aria-expanded', 'true'); menu.querySelector('button[aria-current="true"]').focus(); }
+function closeMenu() { if (menu.hidden) return; menu.hidden = true; $('#menuBtn').setAttribute('aria-expanded', 'false'); $('#menuBtn').focus(); }
+$('#menuBtn').addEventListener('click', openMenu);
+$('#menuClose').addEventListener('click', closeMenu);
+menu.addEventListener('click', e => { if (e.target === menu) closeMenu(); });
+
+/* Tablist dengan navigasi panah */
+function tablist(box, items, onPick, vertical) {
+  box.setAttribute('role', 'tablist'); if (vertical) box.setAttribute('aria-orientation', 'vertical');
+  function pick(i, focus) {
+    items.forEach((b, j) => { b.setAttribute('aria-selected', String(j === i)); b.tabIndex = j === i ? 0 : -1; });
+    onPick(i); if (focus) items[i].focus();
+  }
+  items.forEach((b, i) => { b.setAttribute('role', 'tab'); b.addEventListener('click', () => pick(i)); });
+  box.addEventListener('keydown', e => {
+    const n = items.length, c = items.findIndex(b => b.getAttribute('aria-selected') === 'true');
+    const nx = vertical ? 'ArrowDown' : 'ArrowRight', pv = vertical ? 'ArrowUp' : 'ArrowLeft';
+    let i = -1;
+    if (e.key === nx) i = (c + 1) % n; else if (e.key === pv) i = (c - 1 + n) % n;
+    else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = n - 1;
+    if (i >= 0) { e.preventDefault(); e.stopPropagation(); pick(i, true); }
+  });
+  pick(0);
+}
+
+/* =====================================================================
+   ISI SLIDE
+   ===================================================================== */
+// --- Tujuan
+const GOALS = [
+  ['buku', 'Memahami latar belakang', 'Memahami faktor yang melatarbelakangi munculnya Perang Padri dan keterlibatan Belanda dalam konflik di Minangkabau.'],
+  ['benteng', 'Menganalisis strategi', 'Menganalisis strategi perjuangan Tuanku Imam Bonjol serta strategi Belanda dalam menghadapi perlawanan di wilayah Bonjol.'],
+  ['tokoh', 'Mengenal tokoh', 'Mengidentifikasi tokoh-tokoh penting yang terlibat serta memahami peran mereka dalam perkembangan Perang Padri.'],
+  ['bintang', 'Menilai nilai perjuangan', 'Menghubungkan perjuangan Tuanku Imam Bonjol dengan nilai keberanian, keteguhan, kepemimpinan, dan perlawanan terhadap kolonialisme.']
+];
+GOALS.forEach(([m, t, p]) => {
+  const card = document.createElement('article'); card.className = 'panel goal';
+  const ico = document.createElement('div'); ico.className = 'ico'; ico.appendChild(mapCanvas(MAPS[m], 4));
+  card.appendChild(ico);
+  card.insertAdjacentHTML('beforeend', `<h3>${t}</h3><p>${p}</p>`);
+  $('#goalGrid').appendChild(card);
+});
+drawMap($('#cv-flame'), MAPS.api); $('#cv-flame').style.width = '40px'; $('#cv-flame').style.height = '50px';
+
+// --- Materi
+const off = document.createElement('canvas'); off.width = PW; off.height = PH;
+const offCtx = off.getContext('2d');
+const MATERI = [
+  { tab: '1. Latar Belakang', h: 'Awal Mula Perang Padri', p: 'Perang Padri bermula dari konflik antara Kaum Padri dan Kaum Adat di wilayah Minangkabau. Perselisihan tersebut berkaitan dengan upaya pembaruan kehidupan keagamaan dan adat dalam masyarakat.', view: { st: 1.5 } },
+  { tab: '2. Tokoh Perjuangan', h: 'Perlawanan Tuanku Imam Bonjol', p: 'Tuanku Imam Bonjol menjadi salah satu pemimpin utama perlawanan. Bonjol berkembang menjadi pusat pertahanan penting dalam menghadapi usaha Belanda menguasai wilayah Minangkabau.', view: { st: 1.5, crop: true } },
+  { tab: '3. Jalannya Perang', h: 'Campur Tangan Belanda', p: 'Belanda kemudian memanfaatkan konflik tersebut untuk memperluas pengaruhnya di Sumatra Barat. Keterlibatan Belanda mengubah konflik internal menjadi perjuangan yang semakin kuat melawan kekuasaan kolonial.', view: { st: 8.2 } }
+];
+let mSel = 0;
+const mTabs = MATERI.map(m => { const b = document.createElement('button'); b.className = 'tab'; b.textContent = m.tab; $('#materiTabs').appendChild(b); return b; });
+tablist($('#materiTabs'), mTabs, i => { mSel = i; $('#mTitle').textContent = MATERI[i].h; $('#mText').textContent = MATERI[i].p; });
+
+// --- Timeline
+const TL = [
+  { y: 'Awal abad ke-19', p: 'Konflik antara Kaum Padri dan Kaum Adat berkembang di wilayah Minangkabau.', view: { st: 1 } },
+  { y: '1821', p: 'Belanda mulai melakukan intervensi secara langsung dalam konflik di Sumatra Barat.', view: { st: 5.8 } },
+  { y: '1820-an', p: 'Perlawanan terhadap Belanda semakin berkembang. Tuanku Imam Bonjol menjadi salah satu pemimpin penting dalam perjuangan tersebut.', view: { st: 1.5, crop: true } },
+  { y: '1830-an', p: 'Belanda meningkatkan tekanan militer dan memperkuat posisi mereka untuk menguasai wilayah pertahanan Padri.', view: { st: 8.4 } },
+  { y: '1837', p: 'Pertahanan Bonjol berhasil ditembus oleh Belanda. Tuanku Imam Bonjol ditangkap dan kemudian diasingkan.', view: { st: 21.5 }, cls: 'hot' },
+  { y: '1864', p: 'Tuanku Imam Bonjol meninggal dalam pengasingan di Manado.', view: { exile: true }, cls: 'after-end' }
+];
+let tSel = 0;
+const tNodes = TL.map(e => { const b = document.createElement('button'); b.className = 'node ' + (e.cls || ''); b.textContent = e.y; $('#rail').appendChild(b); return b; });
+tablist($('#rail'), tNodes, i => { tSel = i; $('#tlYear').textContent = TL[i].y; $('#tlText').textContent = TL[i].p; });
+
+// --- Analisis
+const ASPEK = [
+  { k: 'Penyebab & Kepentingan', b: [['Penyebab', 'Campur tangan Belanda dalam konflik di Minangkabau dan usaha memperluas kekuasaan kolonial.'], ['Kepentingan', 'Mempertahankan kemandirian wilayah Minangkabau serta menolak dominasi dan campur tangan Belanda.']] },
+  { k: 'Tokoh & Lawan', b: [['Tokoh utama', 'Tuanku Imam Bonjol dan tokoh-tokoh Padri.'], ['Lawan', 'Pemerintah kolonial Belanda beserta pasukannya.']], vs: true },
+  { k: 'Strategi & Pertahanan', b: [['Strategi perlawanan', 'Mempertahankan wilayah Bonjol dan memanfaatkan kondisi geografis untuk menghadapi tekanan Belanda.'], ['Pertahanan', 'Bonjol menjadi pusat pertahanan penting yang mampu bertahan menghadapi serangan Belanda dalam waktu yang panjang.']] },
+  { k: 'Kekuatan & Kelemahan', b: [['Kekuatan', 'Semangat perjuangan, dukungan masyarakat, kepemimpinan, dan kemampuan mempertahankan wilayah.'], ['Kelemahan', 'Keterbatasan sumber daya dan persenjataan dibandingkan kekuatan militer Belanda serta tekanan perang yang berlangsung lama.']] },
+  { k: 'Peran Masyarakat', b: [[null, 'Masyarakat Minangkabau memberikan dukungan terhadap perjuangan melalui berbagai bentuk bantuan dan keterlibatan dalam mempertahankan wilayah dari penguasaan Belanda.']] },
+  { k: 'Politik Kolonial', b: [[null, 'Belanda menggunakan konflik yang telah berlangsung di Minangkabau sebagai kesempatan untuk memperluas pengaruh politik dan kekuasaannya di Sumatra Barat.']] },
+  { k: 'Nilai & Nasionalisme', b: [['Nilai perjuangan', 'Keberanian, keteguhan, kepemimpinan, dan pantang menyerah.'], ['Nasionalisme', 'Perjuangan Tuanku Imam Bonjol menjadi salah satu bagian dari sejarah panjang perlawanan masyarakat Nusantara terhadap kolonialisme.']] }
+];
+const aBtns = ASPEK.map(a => { const b = document.createElement('button'); b.className = 'aspek'; b.textContent = a.k; $('#anaList').appendChild(b); return b; });
+tablist($('#anaList'), aBtns, i => {
+  const a = ASPEK[i];
+  $('#anaTitle').textContent = a.k;
+  $('#anaBlocks').innerHTML = a.b.map(([l, t]) => `<div class="blk${l ? '' : ' solo'}">${l ? `<b>${l}</b>` : ''}<p>${t}</p></div>`).join('');
+  $('#anaVs').hidden = !a.vs;
+}, true);
+(function () {
+  const c1 = $('#cv-vs1'), c2 = $('#cv-vs2');
+  c1.style.width = '100px'; c1.style.height = '90px'; c2.style.width = '100px'; c2.style.height = '90px';
+  G = c1.getContext('2d'); dutch(6, 16, {});
+  G = c2.getContext('2d'); padri(9, 16, { leader: 1 });
+})();
+
+// --- Aktivitas
+const STEPS = [
+  'Bentuk kelompok beranggotakan 3–4 orang.',
+  'Pelajari latar belakang dan perkembangan Perang Padri.',
+  'Analisis mengapa Belanda akhirnya mampu menguasai Bonjol.',
+  'Diskusikan strategi dan nilai perjuangan Tuanku Imam Bonjol.',
+  'Presentasikan hasil analisis kelompok.'
+];
+$('#actChecks').innerHTML = STEPS.map((s, i) => `<li><label><input type="checkbox"><span>${s}</span></label></li>`).join('');
+$('#actProg').innerHTML = STEPS.map(() => '<i></i>').join('');
+$('#actChecks').addEventListener('change', () => {
+  const n = $$('#actChecks input').filter(b => b.checked).length;
+  [...$('#actProg').children].forEach((el, k) => el.classList.toggle('on', k < n));
+  $('#actText').textContent = n === STEPS.length ? 'Semua langkah selesai' : `${n} dari ${STEPS.length} langkah selesai`;
+});
+(function () { const c = $('#cv-group'); drawGroup(c.getContext('2d')); c.style.width = '256px'; c.style.height = '160px'; c.style.maxWidth = '100%'; c.style.height = 'auto'; })();
+
+// --- Latihan
+const QUIZ = {
+  q: 'Apa salah satu faktor utama yang menyebabkan Perang Padri berkembang menjadi perlawanan terhadap Belanda?',
+  o: ['Persaingan perdagangan antara kerajaan di Jawa', 'Campur tangan Belanda dalam konflik di Minangkabau', 'Perselisihan antara Portugis dan Minangkabau', 'Keinginan Tuanku Imam Bonjol menguasai seluruh Sumatra'],
+  a: 1,
+  why: 'Belanda memanfaatkan konflik yang sudah ada di Minangkabau untuk memperluas pengaruhnya di Sumatra Barat. Campur tangan itulah yang mengubah konflik internal menjadi perlawanan terhadap kekuasaan kolonial.'
+};
+$('#qText').textContent = '1. ' + QUIZ.q;
+$('#qOpts').innerHTML = QUIZ.o.map((t, i) => `<label class="opt"><span class="k">${'ABCD'[i]}.</span><input type="radio" name="q1" value="${i}"><span>${t}</span></label>`).join('');
+function qClear() { $$('.opt').forEach(o => o.classList.remove('ok', 'bad')); }
+$('#qCheck').addEventListener('click', () => {
+  const sel = $('input[name="q1"]:checked'), fb = $('#qFb');
+  qClear(); fb.classList.remove('bad');
+  if (!sel) { fb.textContent = 'Pilih satu jawaban dulu, lalu tekan Periksa jawaban.'; return; }
+  const v = +sel.value, opts = $$('.opt');
+  opts[QUIZ.a].classList.add('ok');
+  if (v === QUIZ.a) fb.innerHTML = `<b>Benar.</b> ${QUIZ.why}`;
+  else { opts[v].classList.add('bad'); fb.classList.add('bad'); fb.innerHTML = `<b>Belum tepat.</b> Jawaban yang benar adalah B. ${QUIZ.why}`; }
+});
+$('#qReset').addEventListener('click', () => { qClear(); $$('input[name="q1"]').forEach(r => r.checked = false); $('#qFb').classList.remove('bad'); $('#qFb').textContent = 'Pilih satu jawaban, lalu tekan Periksa jawaban.'; });
+
+// --- HOTS
+$('#hotsAns').addEventListener('input', e => {
+  const n = (e.target.value.trim().match(/\S+/g) || []).length;
+  $('#hotsCount').textContent = n + ' kata';
+});
+
+// --- Refleksi
+$('#reflForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const nama = $('#rNama').value.trim(), jawab = $('#rJawab').value.trim();
+  if (!nama || !jawab) { $('#rErr').textContent = !nama ? 'Isi nama dan kelas dulu.' : 'Tulis jawaban refleksi dulu.'; return; }
+  $('#rErr').textContent = '';
+  $('#rThanks').textContent = 'Terima kasih, ' + nama.split('/')[0].trim() + '.';
+  $('#rOut').value = `Refleksi: Tuanku Imam Bonjol vs Belanda\nNama & kelas: ${nama}\n\nNilai perjuangan yang paling penting:\n${jawab}`;
+  $('#rResult').hidden = false; $('#reflForm').hidden = true; $('#rMsg').textContent = '';
+});
+$('#rCopy').addEventListener('click', async () => {
+  const out = $('#rOut');
+  try { await navigator.clipboard.writeText(out.value); $('#rMsg').textContent = 'Tersalin.'; }
+  catch (err) { out.focus(); out.select(); $('#rMsg').textContent = 'Teks sudah dipilih. Salin manual dari kotak di atas.'; }
+});
+$('#rAgain').addEventListener('click', () => { $('#rResult').hidden = true; $('#reflForm').hidden = false; $('#rJawab').focus(); });
+
+/* =====================================================================
+   SIMULASI
+   ===================================================================== */
+const PHASES = [
+  { y: '1820-an', t: 'Bonjol menjadi pusat pertahanan', d: 'Bonjol berkembang menjadi pusat pertahanan penting dalam menghadapi usaha Belanda menguasai wilayah Minangkabau.' },
+  { y: '1830-an', t: 'Belanda memperkuat posisi', d: 'Belanda meningkatkan tekanan militer dan memperkuat posisi mereka untuk menguasai wilayah pertahanan Padri.' },
+  { y: '1830-an', t: 'Pengepungan dan pertahanan', d: 'Pasukan Padri memanfaatkan kondisi geografis dan bertahan menghadapi serangan Belanda dalam waktu yang panjang.' },
+  { y: '1837', t: 'Pertahanan Bonjol ditembus', d: 'Belanda berhasil menembus pertahanan Bonjol. Tuanku Imam Bonjol ditangkap dan kemudian diasingkan.' }
+];
+const phaseOf = st => { let p = 0; PHASE_AT.forEach((v, i) => { if (st >= v) p = i; }); return p; };
+$('#phases').innerHTML = PHASES.map((p, i) => `<li><button data-p="${i}"><span class="n">${i + 1}</span><span>${p.t}</span></button></li>`).join('');
+$('#phases').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { sim.st = PHASE_AT[+b.dataset.p] + 0.05; renderSim(true); } });
+
+const sim = { st: 0, playing: false, speed: 1, lastPhase: -1 };
+const simCtx = $('#cv-sim').getContext('2d');
+function setPlayLabel() {
+  $('#simPlay').textContent = sim.playing ? 'Jeda' : (sim.st <= 0 || sim.st >= T_END) ? 'Mulai Simulasi' : 'Lanjutkan';
+}
+$('#simPlay').addEventListener('click', () => {
+  if (sim.playing) sim.playing = false;
+  else { if (sim.st >= T_END) sim.st = 0; sim.playing = true; }
+  setPlayLabel();
+});
+$('#simReset').addEventListener('click', () => { sim.st = 0; sim.playing = true; setPlayLabel(); });
+$('#simSpeed').addEventListener('click', () => { sim.speed = sim.speed === 1 ? 2 : 1; $('#simSpeed').textContent = 'Kecepatan ' + sim.speed + 'x'; });
+$('#scrub').addEventListener('input', e => { sim.st = +e.target.value; sim.playing = false; setPlayLabel(); });
+
+function renderSim(force) {
+  const p = phaseOf(sim.st);
+  if (p !== sim.lastPhase || force) {
+    sim.lastPhase = p;
+    $('#badge').textContent = PHASES[p].y;
+    $('#capT').textContent = PHASES[p].t; $('#capD').textContent = PHASES[p].d;
+    $$('#phases button').forEach((b, i) => b.setAttribute('aria-current', i === p ? 'true' : 'false'));
+  }
+  $('#scrub').value = sim.st;
+}
+
+/* =====================================================================
+   LOOP ANIMASI (hanya menggambar slide yang sedang tampil)
+   ===================================================================== */
+const heroCtx = $('#cv-hero').getContext('2d'), mCtx = $('#cv-materi').getContext('2d'), tCtx = $('#cv-tl').getContext('2d');
+function drawView(ctx, v, t) {
+  if (v.exile) { drawExile(ctx, t); return; }
+  if (v.crop) { drawScene(offCtx, t, v.st, { d: 0.12 }); ctx.imageSmoothingEnabled = false; ctx.drawImage(off, 128, 36, 128, 72, 0, 0, PW, PH); return; }
+  drawScene(ctx, t, v.st, { d: v.st > 10 ? undefined : 0.12 });
+}
+let tm = 0, last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; tm += dt;
+  const T = reduced ? 3 : tm, id = ids[cur];
+  if (id === 'beranda') drawScene(heroCtx, T, 2, { d: 0.18 });
+  else if (id === 'materi') drawView(mCtx, MATERI[mSel].view, T);
+  else if (id === 'timeline') drawView(tCtx, TL[tSel].view, T);
+  else if (id === 'simulasi') {
+    if (sim.playing) { sim.st = Math.min(T_END, sim.st + dt * sim.speed); if (sim.st >= T_END) { sim.playing = false; setPlayLabel(); } }
+    drawScene(simCtx, tm, sim.st);
+    renderSim(false);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ===== Mulai ===== */
+renderSim(true); setPlayLabel();
+const start = ids.indexOf((location.hash.match(/#\/(\w+)/) || [])[1]);
+go(start >= 0 ? start : 0, { focus: false });
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
